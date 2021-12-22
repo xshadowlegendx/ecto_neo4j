@@ -35,7 +35,7 @@ defmodule Ecto.Adapters.Neo4j.Cql.Node do
   def insert(node_label, data, [], return) do
     data_to_set =
       data
-      |> Enum.map(fn {k, _} -> "n.#{k} = {#{k}}" end)
+      |> Enum.map(fn {k, _} -> "n.#{k} = $#{k}" end)
 
     cql_set =
       if length(data_to_set) > 0 do
@@ -59,13 +59,13 @@ defmodule Ecto.Adapters.Neo4j.Cql.Node do
   def insert(node_label, data, primary_keys, return) do
     pk_clause =
       Enum.map(primary_keys, fn pk ->
-        "#{Atom.to_string(pk)}: {#{Atom.to_string(pk)}}"
+        "#{Atom.to_string(pk)}: $#{Atom.to_string(pk)}"
       end)
       |> Enum.join(",")
 
     data_to_set =
       data
-      |> Enum.map(fn {k, _} -> "n.#{k} = {#{k}}" end)
+      |> Enum.map(fn {k, _} -> "n.#{k} = $#{k}" end)
 
     cql_set =
       if length(data_to_set) > 0 do
@@ -118,14 +118,14 @@ defmodule Ecto.Adapters.Neo4j.Cql.Node do
   def update(node_label, data, filters \\ %{}) do
     set =
       data
-      |> Enum.map(fn {k, _} -> "n.#{k} = {#{k}}" end)
+      |> Enum.map(fn {k, _} -> "n.#{k} = $#{k}" end)
       |> Enum.join(", \n")
 
     cql_where =
       if map_size(filters) > 0 do
         where =
           filters
-          |> Enum.map(fn {k, _} -> "n.#{k} = {f_#{k}}" end)
+          |> Enum.map(fn {k, _} -> "n.#{k} = $f_#{k}" end)
           |> Enum.join(" AND ")
 
         "WHERE\n  " <> where
@@ -177,7 +177,7 @@ defmodule Ecto.Adapters.Neo4j.Cql.Node do
   def delete(node_label, filters) do
     where =
       filters
-      |> Enum.map(fn {k, _} -> "n.#{k} = {#{k}}" end)
+      |> Enum.map(fn {k, _} -> "n.#{k} = $#{k}" end)
       |> Enum.join(" AND ")
 
     cql = """
@@ -243,7 +243,7 @@ defmodule Ecto.Adapters.Neo4j.Cql.Node do
     WITH
       n AS n
     LIMIT
-      {limit}
+      $limit
     DETACH DELETE
       n
     RETURN
@@ -523,9 +523,9 @@ defmodule Ecto.Adapters.Neo4j.Cql.Node do
     WITH
       n AS n
     SKIP
-      {skip}
+      $skip
     LIMIT
-      {limit}
+      $limit
     SET
       n.#{new_name} = n.#{old_name}
     REMOVE
@@ -563,7 +563,7 @@ defmodule Ecto.Adapters.Neo4j.Cql.Node do
     WITH
       n AS n
     LIMIT
-      {limit}
+      $limit
     SET
       n:#{new_label}
     REMOVE

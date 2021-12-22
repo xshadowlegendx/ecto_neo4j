@@ -9,11 +9,11 @@ defmodule EctoNeo4j.Cql.RelationshipTest do
     MATCH
       (n0:User)-[rel]->(n:Post)
     WHERE
-      n0.uuid = {uuid}
+      n0.uuid = $uuid
     RETURN
       COLLECT(rel) AS relationships, n
     """
 
-    assert cql == RelationshipCql.get_related("User", "Post", "n0.uuid = {uuid}")
+    assert cql == RelationshipCql.get_related("User", "Post", "n0.uuid = $uuid")
   end
 end

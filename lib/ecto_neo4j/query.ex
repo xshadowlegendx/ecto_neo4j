@@ -684,11 +684,11 @@ defmodule Ecto.Adapters.Neo4j.Query do
 
   @spec stringify_set(SetExpr.t()) :: String.t()
   defp stringify_set(%SetExpr{field: field, increment: increment}) when not is_nil(increment) do
-    "#{stringify_field(field)} = #{stringify_field(field)} + {#{increment}}"
+    "#{stringify_field(field)} = #{stringify_field(field)} + $#{increment}"
   end
 
   defp stringify_set(%SetExpr{field: field, value: value}) do
-    "#{stringify_field(field)} = {#{value}}"
+    "#{stringify_field(field)} = $#{value}"
   end
 
   @spec stringify_batch(Batch.t()) :: String.t()
