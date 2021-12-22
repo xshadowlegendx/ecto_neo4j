@@ -276,4 +276,8 @@ defmodule Ecto.Adapters.Neo4j.Storage.Migrator do
   def lock_for_migrations(_repo, query, _opts, fun) do
     query |> fun.()
   end
+
+  def lock_for_migrations(_meta, _opts, fun) do
+    fun.()
+  end
 end
