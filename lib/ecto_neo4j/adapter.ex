@@ -256,6 +256,9 @@ defmodule Ecto.Adapters.Neo4j do
   defdelegate lock_for_migrations(repo, query, opts, fun),
     to: Ecto.Adapters.Neo4j.Storage.Migrator
 
+  defdelegate lock_for_migrations(meta, opts, fun),
+    to: Ecto.Adapters.Neo4j.Storage.Migrator
+
   def supports_ddl_transaction?(), do: false
 
   @behaviour Ecto.Adapter.Transaction
