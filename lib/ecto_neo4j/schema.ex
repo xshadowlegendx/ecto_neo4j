@@ -68,7 +68,7 @@ defmodule Ecto.Adapters.Neo4j.Schema do
     `:unique`: set to `true`, the association will be a `has_one`.
     Set to `false`, association will be `has_many`. [Default: false]
   """
-  defmacro incoming_relationship(name, queryable, [fkey_type: fkey_type] \\ [type: :id]) do
+  defmacro incoming_relationship(name, queryable, opts \\ [type: :id]) do
     quote do
       foreign_key =
         unquote(name)
@@ -76,9 +76,11 @@ defmodule Ecto.Adapters.Neo4j.Schema do
         |> Kernel.<>("_id")
         |> String.to_atom()
 
+      opts = unquote(opts)
+
       belongs_to unquote(name), unquote(queryable),
         foreign_key: foreign_key,
-        type: fkey_type,
+        type: Keyword.get(opts, :fkey_type, :id),
         references: :id,
         on_replace: :delete
     end
