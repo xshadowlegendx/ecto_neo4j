@@ -12,7 +12,7 @@ defmodule Ecto.Adapters.Neo4j.Schema do
     quote do
       use Ecto.Schema
       import Ecto.Adapters.Neo4j.Schema
-      @primary_key {:uuid, Ecto.UUID, []}
+      @primary_key {:id, :id, autogenerate: false}
     end
   end
 
@@ -73,13 +73,13 @@ defmodule Ecto.Adapters.Neo4j.Schema do
       foreign_key =
         unquote(name)
         |> Atom.to_string()
-        |> Kernel.<>("_uuid")
+        |> Kernel.<>("_id")
         |> String.to_atom()
 
       belongs_to unquote(name), unquote(queryable),
         foreign_key: foreign_key,
-        type: Ecto.UUID,
-        references: :uuid,
+        type: :id,
+        references: :id,
         on_replace: :delete
     end
   end
@@ -88,7 +88,7 @@ defmodule Ecto.Adapters.Neo4j.Schema do
   def build_foreign_key(name) do
     name
     |> Atom.to_string()
-    |> Kernel.<>("_uuid")
+    |> Kernel.<>("_id")
     |> String.to_atom()
   end
 end
