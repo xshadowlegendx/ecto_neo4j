@@ -12,7 +12,7 @@ defmodule Ecto.Adapters.Neo4j.Schema do
     quote do
       use Ecto.Schema
       import Ecto.Adapters.Neo4j.Schema
-      @primary_key {:id, :id, autogenerate: false}
+      @primary_key {:entity_id, :id, autogenerate: false}
     end
   end
 
@@ -40,16 +40,12 @@ defmodule Ecto.Adapters.Neo4j.Schema do
 
       if Keyword.get(opts, :unique, false) do
         has_one unquote(name), unquote(queryable),
-          foreign_key: unquote(name) |> build_foreign_key(),
-          type: Keyword.get(opts, :fkey_type, :id),
-          references: Keyword.get(opts, :fkey_ref_name),
-          on_replace: :delete
+          on_replace: :delete,
+          foreign_key: :entity_id
       else
         has_many unquote(name), unquote(queryable),
-          foreign_key: unquote(name) |> build_foreign_key(),
-          type: Keyword.get(opts, :fkey_type, :id),
-          references: Keyword.get(opts, :fkey_ref_name),
-          on_replace: :delete
+          on_replace: :delete,
+          foreign_key: :entity_id
       end
     end
   end
@@ -83,10 +79,10 @@ defmodule Ecto.Adapters.Neo4j.Schema do
       opts = unquote(opts)
 
       belongs_to unquote(name), unquote(queryable),
+        on_replace: :delete,
+        references: :entity_id,
         foreign_key: foreign_key,
-        type: Keyword.get(opts, :fkey_type, :id),
-        references: Keyword.get(opts, :fkey_ref_name),
-        on_replace: :delete
+        type: Keyword.get(opts, :fkey_type, :id)
     end
   end
 
